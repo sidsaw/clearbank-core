@@ -25,11 +25,7 @@ jobs:
           set -euo pipefail
 
           # Build the JSON payload for Devin's session-create endpoint.
-          # Endpoint, auth header, and request shape verified against
-          # https://docs.devin.ai/api-reference/sessions/create-a-new-devin-session
-          # TODO verify against docs.devin.ai — base host api.devin.ai is the
-          # documented public host, but the OpenAPI spec does not list it
-          # explicitly; re-confirm before the demo.
+          # Endpoint docs: https://docs.devin.ai/api-reference/v1/sessions/create-a-new-devin-session
           PAYLOAD=$(jq -n \
             --arg title "$ISSUE_TITLE" \
             --arg body  "${ISSUE_BODY:-(no description provided)}" \
