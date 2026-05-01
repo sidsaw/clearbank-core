@@ -26,19 +26,16 @@ ClearBank is structured as a **microservices monorepo**. Each service owns a sin
 
 ## Architecture
 
-See [docs/architecture.pdf](docs/architecture.pdf) for the full system diagram.
+See **[docs/architecture.md](docs/architecture.md)** for the full architecture documentation, including detailed service diagrams, API references, data-flow sequences, and event schemas.
 
-```
-┌──────────────┐     ┌────────────────────┐     ┌──────────────┐
-│  auth-service │────▶│ transaction-service │────▶│ audit-service │
-│  (TypeScript) │     │       (Java)        │     │ (TypeScript)  │
-└──────────────┘     └────────────────────┘     └──────────────┘
-                              │
-                              ▼
-                      ┌──────────────┐
-                      │  pii-service  │
-                      │   (Python)    │
-                      └──────────────┘
+```mermaid
+graph LR
+    Client([Client]) --> GW[API Gateway]
+    GW --> Auth[Auth Service]
+    GW --> Txn[Transaction Service]
+    Txn -.-> PII[PII Service]
+    Auth -.-> Audit[Audit Service]
+    Txn -.-> Audit
 ```
 
 ## Coverage
