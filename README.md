@@ -1,6 +1,6 @@
 # ClearBank Core
 
-**ClearBank** is a consumer digital banking platform built to power the everyday financial lives of its customers — much like Bank of America's digital banking experience. From checking and savings account management to real-time money movement, ClearBank gives users secure, 24/7 access to their finances through a modern, API-driven architecture.
+**ClearBank** is a consumer digital banking platform built to power the everyday financial lives of its customers. From checking and savings account management to real-time money movement, ClearBank gives users secure, 24/7 access to their finances through a modern, API-driven architecture.
 
 ## What ClearBank Does
 
