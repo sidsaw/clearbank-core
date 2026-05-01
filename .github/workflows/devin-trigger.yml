@@ -1,0 +1,73 @@
+name: Devin trigger
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  issues: write
+  contents: read
+
+jobs:
+  trigger-devin:
+    if: github.event.label.name == 'devin'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Create Devin session
+        id: devin
+        env:
+          DEVIN_API_KEY: ${{ secrets.DEVIN_API_KEY }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          REPO_URL: ${{ github.event.repository.html_url }}
+        run: |
+          set -euo pipefail
+
+          # Build the JSON payload for Devin's session-create endpoint.
+          # Endpoint, auth header, and request shape verified against
+          # https://docs.devin.ai/api-reference/sessions/create-a-new-devin-session
+          # TODO verify against docs.devin.ai — base host api.devin.ai is the
+          # documented public host, but the OpenAPI spec does not list it
+          # explicitly; re-confirm before the demo.
+          PAYLOAD=$(jq -n \
+            --arg title "$ISSUE_TITLE" \
+            --arg body  "${ISSUE_BODY:-(no description provided)}" \
+            --arg repo  "$REPO_URL" \
+            --arg issue "$ISSUE_URL" \
+            '{
+              prompt: ("# " + $title + "\n\nRepo: " + $repo + "\nIssue: " + $issue + "\n\n" + $body),
+              title: $title
+            }')
+
+          RESPONSE=$(curl -sS --fail-with-body -X POST https://api.devin.ai/v1/sessions \
+            -H "Authorization: Bearer $DEVIN_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d "$PAYLOAD")
+
+          echo "Devin API response: $RESPONSE"
+
+          SESSION_URL=$(echo "$RESPONSE" | jq -r '.url // empty')
+          SESSION_ID=$(echo "$RESPONSE"  | jq -r '.session_id // empty')
+
+          if [ -z "$SESSION_URL" ] || [ -z "$SESSION_ID" ]; then
+            echo "::error::Devin API did not return a session URL/ID. Response: $RESPONSE"
+            exit 1
+          fi
+
+          {
+            echo "session_url=$SESSION_URL"
+            echo "session_id=$SESSION_ID"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Comment on issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          SESSION_URL: ${{ steps.devin.outputs.session_url }}
+          SESSION_ID: ${{ steps.devin.outputs.session_id }}
+        run: |
+          set -euo pipefail
+          BODY=$(printf '🤖 Devin session started: %s\n\nSession ID: `%s`' "$SESSION_URL" "$SESSION_ID")
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body "$BODY"
