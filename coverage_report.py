@@ -81,20 +81,22 @@ def main() -> None:
     overall_cell = f"**{overall_label}**" if overall_label != "0%" else "**0%**"
 
     lines = [
-        f"| {'Service':<20} | {'Source Files':<12} | {'Test Files':<10} | {'Coverage Estimate':<17} |",
-        f"|{'-' * 22}|{'-' * 14}|{'-' * 12}|{'-' * 19}|",
+        f"| {'Service':<20} | {'Coverage Estimate':<17} |",
+        f"|{'-' * 22}|{'-' * 19}|",
     ]
     for name, s, t, cov in rows:
         lines.append(
-            f"| {name:<20} | {str(s):<12} | {str(t):<10} | {format_pct(cov):<17} |"
+            f"| {name:<20} | {format_pct(cov):<17} |"
         )
     lines.append(
-        f"| {'**Overall**':<20} | {str(total_src):<12} | {str(total_test):<10} | {overall_cell:<17} |"
+        f"| {'**Overall**':<20} | {overall_cell:<17} |"
     )
 
     output = "\n".join(lines)
     print(output)
-    Path("coverage.md").write_text(output + "\n")
+    reports_dir = Path("reports")
+    reports_dir.mkdir(exist_ok=True)
+    Path("reports/coverage.md").write_text(output + "\n")
 
 
 if __name__ == "__main__":

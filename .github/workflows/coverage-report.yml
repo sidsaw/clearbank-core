@@ -6,7 +6,7 @@ on:
 
 permissions:
   pull-requests: write
-  contents: read
+  contents: write
 
 jobs:
   coverage:
@@ -19,7 +19,15 @@ jobs:
           python-version: '3.11'
 
       - name: Run coverage report
-        run: python3 coverage_report.py | tee coverage.md
+        run: python3 coverage_report.py | tee reports/coverage.md
+
+      - name: Commit coverage report
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add reports/coverage.md
+          git diff --cached --quiet || git commit -m "Update coverage report [skip ci]"
+          git push
 
       - name: Post or update PR comment
         uses: actions/github-script@v7
@@ -27,7 +35,7 @@ jobs:
           script: |
             const fs = require('fs');
             const marker = '<!-- coverage-report-bot -->';
-            const report = fs.readFileSync('coverage.md', 'utf8');
+            const report = fs.readFileSync('reports/coverage.md', 'utf8');
             const body = `${marker}\n## Coverage Report\n\n${report}`;
 
             const { data: comments } = await github.rest.issues.listComments({
