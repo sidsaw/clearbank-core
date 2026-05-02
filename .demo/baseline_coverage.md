@@ -1,7 +1,7 @@
 # Coverage Audit Report
 
 **Report ID:** AUDIT-BASELINE  
-**Generated:** 2026-05-01  
+**Generated:** 2026-05-02  
 **Type:** Baseline Coverage Assessment  
 **Scope:** All ClearBank Core services  
 
@@ -10,35 +10,44 @@
 ## Summary
 
 This report documents the current test coverage across all ClearBank Core services.
-Overall test coverage stands at approximately **6%**, which is critically below the
-minimum threshold for production readiness. Only one of four services has any test
-coverage.
+Overall estimated test coverage stands at approximately **38%**. Services are in
+varying states of test maturity — auth-service has strong coverage while
+transaction-service and audit-service have minimal test scaffolding, and
+pii-service has no test infrastructure at all.
 
 ## Coverage by Service
 
 | Service              | Coverage Estimate |
 |----------------------|-------------------|
-| auth-service         | ~25%              |
-| transaction-service  | 0%                |
+| auth-service         | ~70%              |
+| transaction-service  | ~17%              |
 | pii-service          | 0%                |
-| audit-service        | 0%                |
-| **Overall**          | **~6%**           |
+| audit-service        | ~17%              |
+| **Overall**          | **~38%**          |
 
 ## Assessment
 
-- **auth-service** has minimal coverage (~25%) from a single test file.
-- **transaction-service**, **pii-service**, and **audit-service** have zero test coverage.
-- No integration or end-to-end tests exist.
+- **auth-service** has ~70% estimated coverage with tests across authentication,
+  session management, password validation, token generation, user repository,
+  rate limiting, and permission checking. Gaps remain in audit logging,
+  configuration, and account lockout code paths.
+- **transaction-service** has ~17% coverage — only basic deposit/withdraw tests exist.
+  Compliance-critical paths (AML checks, structuring detection, transaction audit
+  trail) are entirely untested.
+- **audit-service** has ~17% coverage — only basic event logging is tested.
+  Compliance-critical paths (integrity verification, compliance reporting,
+  retention policies) have no test coverage.
+- **pii-service** has zero test coverage and no test framework configured.
 
 ## Recommendations
 
-| Priority  | Action                                              |
-|-----------|-----------------------------------------------------|
-| Critical  | Add unit tests for transaction-service core logic    |
-| Critical  | Add unit tests for pii-service masking functions     |
-| High      | Expand auth-service tests to cover edge cases        |
-| High      | Add audit-service event logging tests                |
-| Medium    | Target ≥50% coverage across all services             |
+| Priority  | Action                                                        |
+|-----------|---------------------------------------------------------------|
+| Critical  | Add compliance tests for transaction-service AML/CTR paths    |
+| Critical  | Add integrity and compliance tests for audit-service          |
+| Critical  | Set up test framework and add tests for pii-service           |
+| High      | Cover remaining auth-service gaps (lockout, audit logging)    |
+| Medium    | Target ≥60% coverage across all services                      |
 
 ---
 

@@ -9,22 +9,24 @@
 
 ## Summary
 
-Overall estimated test coverage: **~6%**.
+Overall estimated test coverage: **~38%**.
 
 ## Coverage by Service
 
 | Service              | Coverage Estimate |
 |----------------------|-------------------|
-| auth-service         | ~25%              |
-| transaction-service  | 0%                |
+| auth-service         | ~70%              |
+| transaction-service  | ~17%              |
 | pii-service          | 0%                |
-| audit-service        | 0%                |
-| **Overall**          | **~6%**           |
+| audit-service        | ~17%              |
+| **Overall**          | **~38%**          |
 
 ## Assessment
 
-- **auth-service** has ~25% estimated coverage.
-- **transaction-service**, **pii-service**, **audit-service** — zero test coverage.
+- **auth-service** has ~70% estimated coverage.
+- **transaction-service** has ~17% estimated coverage.
+- **audit-service** has ~17% estimated coverage.
+- **pii-service** — zero test coverage.
 
 ---
 

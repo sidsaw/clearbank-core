@@ -56,7 +56,7 @@ def count_files(service_dir: Path):
 def coverage_estimate(sources: int, tests: int) -> float:
     if sources == 0:
         return 0.0
-    return min(tests / sources, 1.0) * 0.25
+    return min(tests / sources, 1.0)
 
 
 def format_pct(cov: float) -> str:
