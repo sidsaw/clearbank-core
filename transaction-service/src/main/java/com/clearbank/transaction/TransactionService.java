@@ -1,3 +1,5 @@
+package com.clearbank.transaction;
+
 import java.util.HashMap;
 import java.util.Map;
 
