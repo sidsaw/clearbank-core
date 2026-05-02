@@ -1,0 +1,183 @@
+{
+  "repo_notes": [
+    {
+      "content": "add a section specifically for compliance critical paths and what they are"
+    }
+  ],
+  "pages": [
+    {
+      "title": "ClearBank Core — Overview",
+      "purpose": "High-level introduction to the ClearBank Core monorepo: what it is, why it exists, the four-service topology, and how to navigate the wiki. Links to child pages for architecture and getting started.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "System Architecture",
+      "purpose": "Detailed description of the hub-and-spoke microservices architecture: the API Gateway as the single entry point, service responsibilities, inter-service communication patterns (synchronous routing vs. asynchronous audit logging), and the full Mermaid component and sequence diagrams from docs/architecture.md.",
+      "parent": "ClearBank Core — Overview",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Getting Started",
+      "purpose": "Practical guide for onboarding engineers: repository layout, per-service tech stacks (Java 17/Maven, Python stdlib, TypeScript 5.3), how to build and run each service locally, and how to read the cross-service coverage report.",
+      "parent": "ClearBank Core — Overview",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Core Services",
+      "purpose": "Overview of the four microservices that make up ClearBank Core, linking to individual deep-dive child pages for each service.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Auth Service",
+      "purpose": "Deep dive into the Java-based auth-service: credential store (in-memory HashMap of seeded users), session token format (valid-<user>-<timestamp>), the login/validateToken/logout API, JUnit 5 test setup, current coverage (~25%), and the single passing AuthTest.",
+      "parent": "Core Services",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Transaction Service",
+      "purpose": "Deep dive into the Java-based transaction-service: in-memory account ledger (HashMap<String,Double>), seeded accounts (ACC001/ACC002/ACC003), deposit/withdraw/transfer/getBalance operations, error handling (insufficient funds, unknown account, same-account transfer), Maven build with JUnit 5 + Mockito, and current 0% test coverage.",
+      "parent": "Core Services",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "PII Service",
+      "purpose": "Deep dive into the Python-based pii-service: zero-dependency design (stdlib only), SSN_PATTERN regex, mask_ssn/mask_account/is_valid_email/redact_record functions, error handling strategy (ValueError on malformed input), the check-and-transform pipeline inside redact_record, and current 0% test coverage.",
+      "parent": "Core Services",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Audit Service",
+      "purpose": "Deep dive into the TypeScript-based audit-service: AuditEvent interface schema (eventType, userId, details, timestamp), in-memory events array, logEvent/getEvents/getEventsByType/clearEvents functions, volatility trade-offs, package.json configuration, and current 0% test coverage.",
+      "parent": "Core Services",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Data Flow & Integration",
+      "purpose": "Explains how the four services interact at runtime: authentication lifecycle, transaction execution with PII redaction, and audit logging. Covers the sequence diagrams, event types, and the hub-and-spoke integration model. Links to child pages for each major flow.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Authentication & Session Lifecycle",
+      "purpose": "Step-by-step walkthrough of the login → token issuance → validateToken → logout flow, including how the auth-service fires logEvent(LOGIN) and logEvent(LOGOUT) to the audit-service, and the token format contract used by the API Gateway.",
+      "parent": "Data Flow & Integration",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Money Movement & PII Redaction",
+      "purpose": "Detailed walkthrough of deposit, withdraw, transfer, and getBalance flows: how the transaction-service calls the pii-service (redact_record) before returning data to the gateway, and how each operation fires a corresponding audit event (DEPOSIT, WITHDRAWAL, TRANSFER).",
+      "parent": "Data Flow & Integration",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "CI/CD & Automation",
+      "purpose": "Overview of the GitHub Actions workflows and automation tooling in the repository, linking to child pages for the coverage pipeline and the Devin AI integration.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Coverage Reporting Pipeline",
+      "purpose": "How coverage_report.py works (source vs. test file detection across all four services, coverage_estimate formula, Markdown table output to coverage.md), and how the coverage-report GitHub Actions workflow runs it on every PR open/synchronize event, posts or updates a bot comment using the <!-- coverage-report-bot --> marker for idempotency.",
+      "parent": "CI/CD & Automation",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Devin AI Agent Integration",
+      "purpose": "How the devin-trigger GitHub Actions workflow bridges GitHub Issues to the Devin AI platform: label-based trigger (devin label), JSON payload construction with jq, POST to api.devin.ai/v1/sessions, session_url/session_id extraction, and the feedback comment posted back to the issue via GitHub CLI.",
+      "parent": "CI/CD & Automation",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Demo Environment Management",
+      "purpose": "Overview of the demo lifecycle tooling (demo_setup.sh, demo_reset.sh, DEMO_RUNBOOK.md) used to create and restore a known-good repository state for repeatable demonstrations. Links to child pages for setup and reset procedures.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Demo Setup (Capture Phase)",
+      "purpose": "How demo_setup.sh captures baseline state: Git tagging (demo-baseline), GitHub GraphQL queries for Project V2 board positions saved to .demo/board_state.json, REST API pagination for issues saved to .demo/issues_state.json, and running coverage_report.py to produce .demo/baseline_coverage.md. Explains the snapshot-in-commit pattern.",
+      "parent": "Demo Environment Management",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Demo Reset (Restore Phase)",
+      "purpose": "How demo_reset.sh restores the environment: destructive git reset --hard demo-baseline + force-push, issue state reconciliation (reopen/close + label sync), PR closure, devin label removal, and Project V2 board restoration via updateProjectV2ItemFieldValue GraphQL mutation with live option-ID remapping. Covers --dry-run mode and idempotency guarantees.",
+      "parent": "Demo Environment Management",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    },
+    {
+      "title": "Glossary",
+      "purpose": "Definitions of all codebase-specific terms, abbreviations, and domain concepts an onboarding engineer needs to know, with code pointers to the relevant files and functions.",
+      "page_notes": [
+        {
+          "content": ""
+        }
+      ]
+    }
+  ]
+}
