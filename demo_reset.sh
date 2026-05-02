@@ -58,8 +58,22 @@ require_cmd() {
 require_cmd gh
 require_cmd git
 require_cmd jq
+require_cmd curl
 
 gh auth status &>/dev/null || die "gh CLI is not authenticated. Run 'gh auth login' first."
+
+# Token for GitHub Projects v2 API (gh CLI may not have project scopes)
+PROJECT_TOKEN="${SIDSAW_GH_PROJECT_PAT:-}"
+
+graphql_project() {
+    local query="$1"
+    if [ -z "$PROJECT_TOKEN" ]; then
+        return 1
+    fi
+    curl -s -H "Authorization: token $PROJECT_TOKEN" \
+         -X POST https://api.github.com/graphql \
+         -d "$query"
+}
 
 # Verify tag exists
 if ! git rev-parse demo-baseline &>/dev/null; then
@@ -211,16 +225,12 @@ BOARD_HAS_ERROR=$(jq -r '.error // empty' "$DEMO_DIR/board_state.json" 2>/dev/nu
 if [ -n "$BOARD_HAS_ERROR" ]; then
     warn "Board state was not captured at setup time. Manual restoration required."
 else
-    # Get project ID (pipe through jq to handle GraphQL errors gracefully)
-    PROJECT_ID=$(gh api graphql -f query='
-      query($owner: String!, $number: Int!) {
-        user(login: $owner) {
-          projectV2(number: $number) {
-            id
-          }
-        }
-      }
-    ' -f owner="$OWNER" -F number="$PROJECT_NUMBER" 2>/dev/null | jq -r '.data.user.projectV2.id // empty') || true
+    # Get project ID using curl + project token
+    PROJECT_ID=""
+    if [ -n "$PROJECT_TOKEN" ]; then
+        PROJECT_ID=$(graphql_project "{\"query\": \"query { user(login: \\\"$OWNER\\\") { projectV2(number: $PROJECT_NUMBER) { id } } }\"}" \
+            | jq -r '.data.user.projectV2.id // empty' 2>/dev/null) || true
+    fi
 
     if [ -z "${PROJECT_ID:-}" ]; then
         warn "Could not access Project #$PROJECT_NUMBER via API."
@@ -237,26 +247,7 @@ else
         else
             # Build a map of option name → option ID from the saved state
             # We need to get the CURRENT field options (IDs may differ if board was recreated)
-            CURRENT_OPTIONS=$(gh api graphql -f query='
-              query($projectId: ID!) {
-                node(id: $projectId) {
-                  ... on ProjectV2 {
-                    fields(first: 20) {
-                      nodes {
-                        ... on ProjectV2SingleSelectField {
-                          id
-                          name
-                          options {
-                            id
-                            name
-                          }
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            ' -f projectId="$PROJECT_ID" 2>/dev/null) || true
+            CURRENT_OPTIONS=$(graphql_project "{\"query\": \"query { node(id: \\\"$PROJECT_ID\\\") { ... on ProjectV2 { fields(first: 20) { nodes { ... on ProjectV2SingleSelectField { id name options { id name } } } } } } }\"}" 2>/dev/null) || true
 
             CURRENT_STATUS_FIELD_ID=$(echo "$CURRENT_OPTIONS" | jq -r '
                 .data.node.fields.nodes[]
@@ -304,23 +295,8 @@ else
 
                     # Find the item in the current project by matching issue/PR number
                     if [ -n "$ITEM_NUMBER" ]; then
-                        CURRENT_ITEM_ID=$(gh api graphql -f query='
-                          query($projectId: ID!) {
-                            node(id: $projectId) {
-                              ... on ProjectV2 {
-                                items(first: 100) {
-                                  nodes {
-                                    id
-                                    content {
-                                      ... on Issue { number }
-                                      ... on PullRequest { number }
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        ' -f projectId="$PROJECT_ID" --jq ".data.node.items.nodes[] | select(.content.number == $ITEM_NUMBER) | .id" 2>/dev/null) || true
+                        CURRENT_ITEM_ID=$(graphql_project "{\"query\": \"query { node(id: \\\"$PROJECT_ID\\\") { ... on ProjectV2 { items(first: 100) { nodes { id content { ... on Issue { number } ... on PullRequest { number } } } } } } }\"}" \
+                            | jq -r ".data.node.items.nodes[] | select(.content.number == $ITEM_NUMBER) | .id" 2>/dev/null) || true
                     fi
 
                     if [ -z "${CURRENT_ITEM_ID:-}" ]; then
@@ -329,23 +305,7 @@ else
                     fi
 
                     if dry "  Move '$ITEM_TITLE' → $SAVED_STATUS"; then
-                        gh api graphql -f query='
-                          mutation($projectId: ID!, $itemId: ID!, $fieldId: ID!, $optionId: String!) {
-                            updateProjectV2ItemFieldValue(
-                              input: {
-                                projectId: $projectId
-                                itemId: $itemId
-                                fieldId: $fieldId
-                                value: { singleSelectOptionId: $optionId }
-                              }
-                            ) {
-                              projectV2Item { id }
-                            }
-                          }
-                        ' -f projectId="$PROJECT_ID" \
-                          -f itemId="$CURRENT_ITEM_ID" \
-                          -f fieldId="$CURRENT_STATUS_FIELD_ID" \
-                          -f optionId="$TARGET_OPTION_ID" >/dev/null 2>&1 && \
+                        graphql_project "{\"query\": \"mutation { updateProjectV2ItemFieldValue(input: {projectId: \\\"$PROJECT_ID\\\", itemId: \\\"$CURRENT_ITEM_ID\\\", fieldId: \\\"$CURRENT_STATUS_FIELD_ID\\\", value: {singleSelectOptionId: \\\"$TARGET_OPTION_ID\\\"}}) { projectV2Item { id } } }\"}" >/dev/null 2>&1 && \
                             info "  Moved '$ITEM_TITLE' → $SAVED_STATUS" || \
                             warn "  Failed to move '$ITEM_TITLE' → $SAVED_STATUS"
                     fi

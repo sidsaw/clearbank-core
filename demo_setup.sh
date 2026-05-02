@@ -12,6 +12,7 @@
 # Prerequisites:
 #   - gh CLI authenticated (gh auth status)
 #   - python3 available (for coverage_report.py)
+#   - SIDSAW_GH_PROJECT_PAT env var set (for GitHub Projects v2 board access)
 #   - Run from the repository root
 #
 set -euo pipefail
@@ -40,8 +41,22 @@ require_cmd gh
 require_cmd git
 require_cmd python3
 require_cmd jq
+require_cmd curl
 
 gh auth status &>/dev/null || die "gh CLI is not authenticated. Run 'gh auth login' first."
+
+# Token for GitHub Projects v2 API (gh CLI may not have project scopes)
+PROJECT_TOKEN="${SIDSAW_GH_PROJECT_PAT:-}"
+
+graphql_project() {
+    local query="$1"
+    if [ -z "$PROJECT_TOKEN" ]; then
+        return 1
+    fi
+    curl -s -H "Authorization: token $PROJECT_TOKEN" \
+         -X POST https://api.github.com/graphql \
+         -d "$query"
+}
 
 if [ ! -f coverage_report.py ]; then
     die "coverage_report.py not found — are you in the repo root?"
@@ -60,20 +75,18 @@ mkdir -p "$DEMO_DIR"
 
 info "Snapshotting GitHub Projects v2 board state..."
 
-# Discover the project node ID (pipe through jq to handle GraphQL errors gracefully)
-PROJECT_ID=$(gh api graphql -f query='
-  query($owner: String!, $number: Int!) {
-    user(login: $owner) {
-      projectV2(number: $number) {
-        id
-        title
-      }
-    }
-  }
-' -f owner="$OWNER" -F number="$PROJECT_NUMBER" 2>/dev/null | jq -r '.data.user.projectV2.id // empty') || true
+# Discover the project node ID using curl + project token
+PROJECT_ID=""
+if [ -n "$PROJECT_TOKEN" ]; then
+    PROJECT_ID=$(graphql_project "{\"query\": \"query { user(login: \\\"$OWNER\\\") { projectV2(number: $PROJECT_NUMBER) { id title } } }\"}" \
+        | jq -r '.data.user.projectV2.id // empty' 2>/dev/null) || true
+fi
 
 if [ -z "${PROJECT_ID:-}" ]; then
     warn "Could not retrieve Project #$PROJECT_NUMBER. Board state will NOT be captured."
+    if [ -z "$PROJECT_TOKEN" ]; then
+        warn "SIDSAW_GH_PROJECT_PAT is not set. Set it to enable project board access."
+    fi
     echo '{"error": "Could not retrieve project board via API. Manual snapshot required."}' > "$DEMO_DIR/board_state.json"
     echo ""
     echo "╔══════════════════════════════════════════════════════════════════╗"
@@ -88,68 +101,7 @@ else
     info "Project ID: $PROJECT_ID"
 
     # Fetch all items with their status field values
-    gh api graphql -f query='
-      query($projectId: ID!) {
-        node(id: $projectId) {
-          ... on ProjectV2 {
-            title
-            items(first: 100) {
-              nodes {
-                id
-                content {
-                  ... on Issue {
-                    number
-                    title
-                    url
-                  }
-                  ... on PullRequest {
-                    number
-                    title
-                    url
-                  }
-                }
-                fieldValues(first: 20) {
-                  nodes {
-                    ... on ProjectV2ItemFieldSingleSelectValue {
-                      name
-                      field {
-                        ... on ProjectV2SingleSelectField {
-                          name
-                        }
-                      }
-                    }
-                    ... on ProjectV2ItemFieldTextValue {
-                      text
-                      field {
-                        ... on ProjectV2Field {
-                          name
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-            fields(first: 20) {
-              nodes {
-                ... on ProjectV2SingleSelectField {
-                  id
-                  name
-                  options {
-                    id
-                    name
-                  }
-                }
-                ... on ProjectV2Field {
-                  id
-                  name
-                }
-              }
-            }
-          }
-        }
-      }
-    ' -f projectId="$PROJECT_ID" > "$DEMO_DIR/board_state.json"
+    graphql_project "{\"query\": \"query { node(id: \\\"$PROJECT_ID\\\") { ... on ProjectV2 { title items(first: 100) { nodes { id content { ... on Issue { number title url } ... on PullRequest { number title url } } fieldValues(first: 20) { nodes { ... on ProjectV2ItemFieldSingleSelectValue { name field { ... on ProjectV2SingleSelectField { name } } } ... on ProjectV2ItemFieldTextValue { text field { ... on ProjectV2Field { name } } } } } } } fields(first: 20) { nodes { ... on ProjectV2SingleSelectField { id name options { id name } } ... on ProjectV2Field { id name } } } } } }\"}" > "$DEMO_DIR/board_state.json"
 
     ITEM_COUNT=$(jq '.data.node.items.nodes | length' "$DEMO_DIR/board_state.json")
     info "Captured $ITEM_COUNT project board items to $DEMO_DIR/board_state.json"
