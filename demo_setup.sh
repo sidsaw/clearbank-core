@@ -6,7 +6,7 @@
 #   1. Tags the current commit as demo-baseline (force overwrite if exists)
 #   2. Snapshots GitHub Project board column state to .demo/board_state.json
 #   3. Snapshots issue states (open/closed, labels) to .demo/issues_state.json
-#   4. Snapshots reports/coverage.md output to .demo/baseline_coverage.md
+#   4. Snapshots audit_reports/coverage.md output to .demo/baseline_coverage.md
 #   5. Commits the .demo/ directory
 #
 # Prerequisites:
@@ -174,11 +174,11 @@ info "Captured $ISSUE_COUNT issues to $DEMO_DIR/issues_state.json"
 info "Generating baseline coverage report..."
 python3 coverage_report.py > /dev/null 2>&1 || true
 
-if [ -f reports/coverage.md ]; then
-    cp reports/coverage.md "$DEMO_DIR/baseline_coverage.md"
+if [ -f audit_reports/coverage.md ]; then
+    cp audit_reports/coverage.md "$DEMO_DIR/baseline_coverage.md"
     info "Saved baseline coverage to $DEMO_DIR/baseline_coverage.md"
 else
-    warn "reports/coverage.md was not generated — saving empty baseline."
+    warn "audit_reports/coverage.md was not generated — saving empty baseline."
     echo "No coverage data available at baseline." > "$DEMO_DIR/baseline_coverage.md"
 fi
 

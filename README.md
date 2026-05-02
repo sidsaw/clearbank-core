@@ -38,6 +38,8 @@ graph LR
     Txn -.-> Audit
 ```
 
-## Coverage
+## Audit Reports
 
-Run `python coverage_report.py` from the repository root to generate a coverage summary across all services.
+The `audit_reports/` directory contains generated coverage audit reports for human review.
+
+Run `python coverage_report.py` from the repository root to generate a fresh coverage audit report in `audit_reports/coverage.md`.
