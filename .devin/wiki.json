@@ -133,7 +133,7 @@
     },
     {
       "title": "Devin AI Agent Integration",
-      "purpose": "How the devin-trigger GitHub Actions workflow bridges GitHub Issues to the Devin AI platform: label-based trigger (devin label), JSON payload construction with jq, POST to api.devin.ai/v1/sessions, session_url/session_id extraction, and the feedback comment posted back to the issue via GitHub CLI. The prompt injected into each session includes the knowledge macros !http-status-codes and !mocking-libraries so Devin automatically loads the project's HTTP status code standards and mocking-library guidelines whenever a testing task is triggered.",
+      "purpose": "How the devin-trigger GitHub Actions workflow bridges GitHub Issues to the Devin AI platform: label-based trigger (devin label), JSON payload construction with jq, POST to api.devin.ai/v1/sessions, session_url/session_id extraction, and the feedback comment posted back to the issue via GitHub CLI. The prompt injected into each session includes the knowledge macros !http-status-codes, !mocking-libraries, and !pii-in-tests so Devin automatically loads the project's HTTP status code standards, mocking-library guidelines, and PII-in-tests rules whenever a testing task is triggered.",
       "parent": "CI/CD & Automation",
       "page_notes": [
         {
