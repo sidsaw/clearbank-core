@@ -36,7 +36,7 @@ Saves the current repo state so it can be restored later.
 1. **Tags the current commit** as `demo-baseline` (force overwrites if the tag already exists) and pushes the tag to origin.
 2. **Snapshots the GitHub Projects v2 board** to `.demo/board_state.json` via GraphQL — captures all items and their `Status` field values, plus the field/option IDs needed for restoration.
 3. **Snapshots all issue states** to `.demo/issues_state.json` — records each issue's number, title, open/closed state, and labels.
-4. **Runs `coverage_report.py`** and copies the output to `.demo/baseline_coverage.md`.
+4. **Runs `coverage_report.py`** and copies `audit_reports/coverage.md` to `.demo/baseline_coverage.md`.
 5. **Commits the `.demo/` directory** and updates the `demo-baseline` tag to include it.
 
 ### Projects v2 limitations
@@ -90,7 +90,7 @@ After running `demo_reset.sh`, verify:
 | Project board | Open the [Projects board](https://github.com/users/sidsaw/projects/3) and confirm items are in their original columns |
 | Issues | Open [Issues](https://github.com/sidsaw/clearbank-core/issues) — states and labels match baseline, no `devin` labels |
 | Pull requests | Open [PRs](https://github.com/sidsaw/clearbank-core/pulls) — no open PRs from previous runs |
-| Coverage | Run `python3 coverage_report.py` and compare with `.demo/baseline_coverage.md` |
+| Coverage | Run `python3 coverage_report.py` and compare `audit_reports/coverage.md` with `.demo/baseline_coverage.md` |
 
 > **Note:** GitHub Projects v2 board restoration is best-effort via the API. If items aren't in the right columns, move them manually.
 
