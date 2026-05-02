@@ -1,18 +1,15 @@
 # Coverage Audit Report
 
-**Report ID:** AUDIT-BASELINE  
-**Generated:** 2026-05-01  
-**Type:** Baseline Coverage Assessment  
+**Report ID:** AUDIT-2026-05-02  
+**Generated:** 2026-05-02  
+**Type:** Coverage Assessment  
 **Scope:** All ClearBank Core services  
 
 ---
 
 ## Summary
 
-This report documents the current test coverage across all ClearBank Core services.
-Overall test coverage stands at approximately **6%**, which is critically below the
-minimum threshold for production readiness. Only one of four services has any test
-coverage.
+Overall estimated test coverage: **~6%**.
 
 ## Coverage by Service
 
@@ -26,19 +23,8 @@ coverage.
 
 ## Assessment
 
-- **auth-service** has minimal coverage (~25%) from a single test file.
-- **transaction-service**, **pii-service**, and **audit-service** have zero test coverage.
-- No integration or end-to-end tests exist.
-
-## Recommendations
-
-| Priority  | Action                                              |
-|-----------|-----------------------------------------------------|
-| Critical  | Add unit tests for transaction-service core logic    |
-| Critical  | Add unit tests for pii-service masking functions     |
-| High      | Expand auth-service tests to cover edge cases        |
-| High      | Add audit-service event logging tests                |
-| Medium    | Target ≥50% coverage across all services             |
+- **auth-service** has ~25% estimated coverage.
+- **transaction-service**, **pii-service**, **audit-service** — zero test coverage.
 
 ---
 
