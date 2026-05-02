@@ -7,6 +7,7 @@
 #   2. Force-pushes main to origin
 #   3. Restores issue states (close/reopen, restore labels) from .demo/issues_state.json
 #   4. Removes "devin" labels from all issues
+#   4b. Deletes all repo labels except "devin"
 #   5. Closes any open PRs created during the previous demo run
 #   6. Restores project board column state from .demo/board_state.json (best-effort)
 #   7. Prints a manual verification checklist
@@ -183,6 +184,26 @@ else
             info "  Removed 'devin' label from issue #$ISSUE_NUM"
         fi
     done
+fi
+
+# ── 4b. Delete all repo labels except "devin" ─────────────────────────────────
+
+info "Deleting all repo labels except 'devin'..."
+ALL_LABELS=$(gh label list --repo "$OWNER/$REPO" --json name --jq '.[].name' 2>/dev/null || echo "")
+
+if [ -z "$ALL_LABELS" ]; then
+    info "  No labels found."
+else
+    while IFS= read -r label; do
+        if [ "$label" = "devin" ]; then
+            info "  Keeping label: $label"
+            continue
+        fi
+        if dry "  Delete repo label: $label"; then
+            gh label delete "$label" --repo "$OWNER/$REPO" --yes 2>/dev/null || true
+            info "  Deleted label: $label"
+        fi
+    done <<< "$ALL_LABELS"
 fi
 
 # ── 5. Close any open PRs from previous demo runs ────────────────────────────

@@ -3,114 +3,67 @@
     "number": 26,
     "title": "Increase overall test coverage to meet OCC examination threshold",
     "state": "open",
-    "labels": [
-      "testing",
-      "compliance",
-      "high-priority"
-    ]
+    "labels": []
   },
   {
     "number": 25,
     "title": "Add edge case tests for error handling across all services",
     "state": "open",
-    "labels": [
-      "testing",
-      "compliance",
-      "high-priority"
-    ]
+    "labels": []
   },
   {
     "number": 24,
     "title": "Add tests for audit-service event logging",
     "state": "open",
-    "labels": [
-      "testing",
-      "compliance",
-      "audit-service"
-    ]
+    "labels": []
   },
   {
     "number": 23,
     "title": "Add tests for pii-service email validation and record redaction",
     "state": "open",
-    "labels": [
-      "testing",
-      "compliance",
-      "pii-service"
-    ]
+    "labels": []
   },
   {
     "number": 22,
     "title": "Add tests for pii-service masking functions",
     "state": "open",
-    "labels": [
-      "testing",
-      "compliance",
-      "high-priority",
-      "pii-service"
-    ]
+    "labels": []
   },
   {
     "number": 21,
     "title": "Add tests for transaction-service transfer and getBalance",
     "state": "open",
-    "labels": [
-      "testing",
-      "compliance",
-      "high-priority",
-      "transaction-service"
-    ]
+    "labels": []
   },
   {
     "number": 20,
     "title": "Add tests for transaction-service deposit and withdraw",
     "state": "open",
-    "labels": [
-      "testing",
-      "compliance",
-      "high-priority",
-      "transaction-service"
-    ]
+    "labels": []
   },
   {
     "number": 19,
     "title": "Add tests for auth-service login and logout",
     "state": "open",
-    "labels": [
-      "testing",
-      "compliance",
-      "auth-service"
-    ]
+    "labels": []
   },
   {
     "number": 18,
     "title": "Set up test infrastructure for audit-service",
     "state": "open",
-    "labels": [
-      "testing",
-      "tech-debt",
-      "audit-service"
-    ]
+    "labels": []
   },
   {
     "number": 17,
     "title": "Set up test infrastructure for pii-service",
     "state": "open",
-    "labels": [
-      "testing",
-      "tech-debt",
-      "pii-service"
-    ]
+    "labels": []
   },
   {
     "number": 16,
     "title": "Set up test infrastructure for transaction-service",
     "state": "open",
-    "labels": [
-      "testing",
-      "tech-debt",
-      "transaction-service"
-    ]
+    "labels": []
   },
   {
     "number": 7,
