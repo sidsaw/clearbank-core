@@ -12,29 +12,29 @@
 
 | Service              | Coverage Estimate |
 |----------------------|-------------------|
-| auth-service         | ~25%              |
-| transaction-service  | 0%                |
+| auth-service         | ~70%              |
+| transaction-service  | ~17%              |
 | pii-service          | 0%                |
-| audit-service        | 0%                |
-| **Overall**          | **~6%**           |
+| audit-service        | ~17%              |
+| **Overall**          | **~38%**          |
 
 ## After
 
 | Service              | Coverage Estimate |
 |----------------------|-------------------|
-| auth-service         | ~25%              |
-| transaction-service  | ~25%              |
+| auth-service         | ~70%              |
+| transaction-service  | ~100%             |
 | pii-service          | 0%                |
-| audit-service        | 0%                |
-| **Overall**          | **~12%**          |
+| audit-service        | ~17%              |
+| **Overall**          | **~58%**          |
 
 ## Changes
 
-- **transaction-service**: 0% → ~25% (+25 pp). Stood up JUnit 5 + Mockito test infrastructure (standard Maven layout, `maven-surefire-plugin` 3.2.2, `mockito-junit-jupiter`) and added 15 JUnit 5 tests across `deposit`, `withdraw`, `transfer`, and `getBalance` covering happy paths and error paths (zero/negative amounts, overdraft, self-transfer, unknown account, atomicity on failed transfers). Added a `transaction-service tests` GitHub Actions workflow that runs `mvn -B test` on PRs touching the service.
-- **auth-service**: ~25% → ~25% (no change).
+- **transaction-service**: ~17% → ~100% (+83 pp). Stood up JUnit 5 + Mockito test infrastructure (flat-layout-aware Maven build via `sourceDirectory`/`testSourceDirectory` + `maven-surefire-plugin` 3.2.2 + `mockito-junit-jupiter`) and added 51 JUnit 5 tests across `TransactionService` (15: deposit/withdraw/transfer/getBalance happy paths and error paths, including overdraft atomicity), `ComplianceChecker` (8: CTR threshold, daily-limit hard block, structuring detection in the $9k–$10k window), `TransferValidator` (10: per-transfer min/max, null/empty source & destination, self-transfer), `TransactionAudit` (6: recording, account filtering, failed/blocked surfacing, integrity verification, unmodifiable list returns), `AccountResolver` (4: resolve/isActive/getAccountType across known and unknown accounts), and `LedgerService` (8: CREDIT/DEBIT math, per-account scoping, unknown-type handling, ordering, and validation). Added a `transaction-service tests` GitHub Actions workflow that runs `mvn -B test` on PRs touching the service.
+- **auth-service**: ~70% → ~70% (no change).
 - **pii-service**: 0% → 0% (no change).
-- **audit-service**: 0% → 0% (no change).
-- **Overall**: ~6% → ~12% (+6 pp).
+- **audit-service**: ~17% → ~17% (no change).
+- **Overall**: ~38% → ~58% (+20 pp).
 
 ---
 
