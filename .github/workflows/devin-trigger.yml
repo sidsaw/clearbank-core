@@ -34,6 +34,14 @@ jobs:
 
           ${ISSUE_BODY}
 
+          ## Knowledge macros
+
+          This task involves writing tests. Include the following macros so Devin
+          loads the relevant project knowledge before starting:
+
+          !http-status-codes
+          !mocking-libraries
+
           ## Instructions
 
           1. **Capture baseline coverage** — Run `python3 coverage_report.py` from
