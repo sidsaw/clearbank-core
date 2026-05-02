@@ -41,6 +41,7 @@ jobs:
 
           !http-status-codes
           !mocking-libraries
+          !pii-in-tests
 
           ## Instructions
 
