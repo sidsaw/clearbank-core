@@ -211,7 +211,7 @@ BOARD_HAS_ERROR=$(jq -r '.error // empty' "$DEMO_DIR/board_state.json" 2>/dev/nu
 if [ -n "$BOARD_HAS_ERROR" ]; then
     warn "Board state was not captured at setup time. Manual restoration required."
 else
-    # Get project ID
+    # Get project ID (pipe through jq to handle GraphQL errors gracefully)
     PROJECT_ID=$(gh api graphql -f query='
       query($owner: String!, $number: Int!) {
         user(login: $owner) {
@@ -220,7 +220,7 @@ else
           }
         }
       }
-    ' -f owner="$OWNER" -F number="$PROJECT_NUMBER" --jq '.data.user.projectV2.id' 2>/dev/null) || true
+    ' -f owner="$OWNER" -F number="$PROJECT_NUMBER" 2>/dev/null | jq -r '.data.user.projectV2.id // empty') || true
 
     if [ -z "${PROJECT_ID:-}" ]; then
         warn "Could not access Project #$PROJECT_NUMBER via API."

@@ -60,7 +60,7 @@ mkdir -p "$DEMO_DIR"
 
 info "Snapshotting GitHub Projects v2 board state..."
 
-# Discover the project node ID
+# Discover the project node ID (pipe through jq to handle GraphQL errors gracefully)
 PROJECT_ID=$(gh api graphql -f query='
   query($owner: String!, $number: Int!) {
     user(login: $owner) {
@@ -70,7 +70,7 @@ PROJECT_ID=$(gh api graphql -f query='
       }
     }
   }
-' -f owner="$OWNER" -F number="$PROJECT_NUMBER" --jq '.data.user.projectV2.id' 2>/dev/null) || true
+' -f owner="$OWNER" -F number="$PROJECT_NUMBER" 2>/dev/null | jq -r '.data.user.projectV2.id // empty') || true
 
 if [ -z "${PROJECT_ID:-}" ]; then
     warn "Could not retrieve Project #$PROJECT_NUMBER. Board state will NOT be captured."
