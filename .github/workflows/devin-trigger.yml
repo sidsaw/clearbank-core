@@ -42,6 +42,7 @@ jobs:
           !http-status-codes
           !mocking-libraries
           !pii-in-tests
+          !playbook-compliance-test-bootstrap
 
           ## Instructions
 
