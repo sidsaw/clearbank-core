@@ -1,19 +1,15 @@
 # Coverage Audit Report
 
-**Report ID:** AUDIT-BASELINE  
+**Report ID:** AUDIT-2026-05-02  
 **Generated:** 2026-05-02  
-**Type:** Baseline Coverage Assessment  
+**Type:** Coverage Assessment  
 **Scope:** All ClearBank Core services  
 
 ---
 
 ## Summary
 
-This report documents the current test coverage across all ClearBank Core services.
-Overall estimated test coverage stands at approximately **38%**. Services are in
-varying states of test maturity — auth-service has strong coverage while
-transaction-service and audit-service have minimal test scaffolding, and
-pii-service has no test infrastructure at all.
+Overall estimated test coverage: **~38%**.
 
 ## Coverage by Service
 
@@ -27,27 +23,10 @@ pii-service has no test infrastructure at all.
 
 ## Assessment
 
-- **auth-service** has ~70% estimated coverage with tests across authentication,
-  session management, password validation, token generation, user repository,
-  rate limiting, and permission checking. Gaps remain in audit logging,
-  configuration, and account lockout code paths.
-- **transaction-service** has ~17% coverage — only basic deposit/withdraw tests exist.
-  Compliance-critical paths (AML checks, structuring detection, transaction audit
-  trail) are entirely untested.
-- **audit-service** has ~17% coverage — only basic event logging is tested.
-  Compliance-critical paths (integrity verification, compliance reporting,
-  retention policies) have no test coverage.
-- **pii-service** has zero test coverage and no test framework configured.
-
-## Recommendations
-
-| Priority  | Action                                                        |
-|-----------|---------------------------------------------------------------|
-| Critical  | Add compliance tests for transaction-service AML/CTR paths    |
-| Critical  | Add integrity and compliance tests for audit-service          |
-| Critical  | Set up test framework and add tests for pii-service           |
-| High      | Cover remaining auth-service gaps (lockout, audit logging)    |
-| Medium    | Target ≥60% coverage across all services                      |
+- **auth-service** has ~70% estimated coverage.
+- **transaction-service** has ~17% estimated coverage.
+- **audit-service** has ~17% estimated coverage.
+- **pii-service** — zero test coverage.
 
 ---
 
