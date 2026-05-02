@@ -146,9 +146,7 @@
     "number": 2,
     "title": "Increase test coverage for transaction-service",
     "state": "closed",
-    "labels": [
-      "devin"
-    ]
+    "labels": []
   },
   {
     "number": 1,
