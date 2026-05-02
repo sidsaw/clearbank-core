@@ -1,71 +1,137 @@
 [
   {
+    "number": 46,
+    "title": "Add inter-service API authentication with signed JWTs",
+    "state": "open",
+    "labels": []
+  },
+  {
+    "number": 45,
+    "title": "Set up CI pipeline for running service tests",
+    "state": "open",
+    "labels": []
+  },
+  {
+    "number": 44,
+    "title": "Implement account statement generation for regulatory compliance",
+    "state": "open",
+    "labels": []
+  },
+  {
+    "number": 43,
+    "title": "Add health check and readiness endpoints to all services",
+    "state": "open",
+    "labels": []
+  },
+  {
+    "number": 42,
+    "title": "Implement structured JSON logging across all services",
+    "state": "open",
+    "labels": []
+  },
+  {
+    "number": 41,
+    "title": "Add real-time payment notification webhooks",
+    "state": "open",
+    "labels": []
+  },
+  {
+    "number": 39,
+    "title": "Set up testing infrastructure for pii-service",
+    "state": "open",
+    "labels": [
+      "testing"
+    ]
+  },
+  {
+    "number": 38,
+    "title": "Map compliance-critical paths and write tests for audit-service",
+    "state": "open",
+    "labels": [
+      "testing"
+    ]
+  },
+  {
+    "number": 37,
+    "title": "Map compliance-critical paths and write tests for transaction-service",
+    "state": "open",
+    "labels": [
+      "testing"
+    ]
+  },
+  {
+    "number": 36,
+    "title": "Finish auth-service tests to reach 100% coverage",
+    "state": "open",
+    "labels": [
+      "testing"
+    ]
+  },
+  {
     "number": 26,
     "title": "Increase overall test coverage to meet OCC examination threshold",
-    "state": "open",
+    "state": "closed",
     "labels": []
   },
   {
     "number": 25,
     "title": "Add edge case tests for error handling across all services",
-    "state": "open",
+    "state": "closed",
     "labels": []
   },
   {
     "number": 24,
     "title": "Add tests for audit-service event logging",
-    "state": "open",
+    "state": "closed",
     "labels": []
   },
   {
     "number": 23,
     "title": "Add tests for pii-service email validation and record redaction",
-    "state": "open",
+    "state": "closed",
     "labels": []
   },
   {
     "number": 22,
     "title": "Add tests for pii-service masking functions",
-    "state": "open",
+    "state": "closed",
     "labels": []
   },
   {
     "number": 21,
     "title": "Add tests for transaction-service transfer and getBalance",
-    "state": "open",
+    "state": "closed",
     "labels": []
   },
   {
     "number": 20,
     "title": "Add tests for transaction-service deposit and withdraw",
-    "state": "open",
+    "state": "closed",
     "labels": []
   },
   {
     "number": 19,
     "title": "Add tests for auth-service login and logout",
-    "state": "open",
+    "state": "closed",
     "labels": []
   },
   {
     "number": 18,
     "title": "Set up test infrastructure for audit-service",
-    "state": "open",
+    "state": "closed",
     "labels": []
   },
   {
     "number": 17,
     "title": "Set up test infrastructure for pii-service",
-    "state": "open",
+    "state": "closed",
     "labels": []
   },
   {
     "number": 16,
     "title": "Set up test infrastructure for transaction-service",
-    "state": "open",
-    "labels": [
-      "devin"
-    ]
+    "state": "closed",
+    "labels": []
   },
   {
     "number": 7,
