@@ -1,7 +1,7 @@
 # Coverage Audit Report
 
-**Report ID:** AUDIT-2026-05-02  
-**Generated:** 2026-05-02  
+**Report ID:** AUDIT-2026-05-03  
+**Generated:** 2026-05-03  
 **Type:** Coverage Assessment  
 **Scope:** All ClearBank Core services  
 
@@ -9,21 +9,21 @@
 
 ## Summary
 
-Overall estimated test coverage: **~38%**.
+Overall estimated test coverage: **~50%**.
 
 ## Coverage by Service
 
 | Service              | Coverage Estimate |
 |----------------------|-------------------|
-| auth-service         | ~70%              |
+| auth-service         | ~100%             |
 | transaction-service  | ~17%              |
 | pii-service          | 0%                |
 | audit-service        | ~17%              |
-| **Overall**          | **~38%**          |
+| **Overall**          | **~50%**          |
 
 ## Assessment
 
-- **auth-service** has ~70% estimated coverage.
+- **auth-service** has ~100% estimated coverage.
 - **transaction-service** has ~17% estimated coverage.
 - **audit-service** has ~17% estimated coverage.
 - **pii-service** — zero test coverage.
