@@ -11,36 +11,27 @@
 
 | Metric | Value |
 |---|---|
-| Overall file coverage | **~38%** |
-| Overall compliance function coverage | **~31%** (22/70 functions) |
+| Overall file coverage | **~50%** |
+| Overall compliance function coverage | **~44%** (31/70 functions) |
 
 ## Coverage by Service
 
 | Service                | File Coverage | Compliance Fns |
 |------------------------|---------------|----------------|
-| auth-service           | ~70%          | ~67%           |
+| auth-service           | 100%          | 100%           |
 | transaction-service    | ~17%          | ~6%            |
 | pii-service            | 0%            | 0%             |
 | audit-service          | ~17%          | ~16%           |
-| **Overall**            | ~38%          | ~31%           |
+| **Overall**            | ~50%          | ~44%           |
 
 ## Compliance Function Coverage Detail
 
 ### auth-service
 
-- File coverage: **~70%** (7 test file(s) / 10 source file(s))
-- Compliance function coverage: **~67%** (18/27 functions)
+- File coverage: **100%** (10 test file(s) / 10 source file(s))
+- Compliance function coverage: **100%** (27/27 functions)
 
-**Uncovered compliance functions (9):**
-  - `isLocked` (in `AccountLockout.java`)
-  - `recordFailure` (in `AccountLockout.java`)
-  - `resetFailures` (in `AccountLockout.java`)
-  - `getFailureCount` (in `AccountLockout.java`)
-  - `getEntriesForUser` (in `AuditLogger.java`)
-  - `clear` (in `AuditLogger.java`)
-  - `getSessionTtlMs` (in `AuthConfig.java`)
-  - `getMaxLoginAttempts` (in `AuthConfig.java`)
-  - `getLockoutDurationMs` (in `AuthConfig.java`)
+All compliance-critical functions are covered.
 
 ### transaction-service
 
@@ -104,7 +95,7 @@
 
 ## Assessment
 
-- **auth-service**: 18/27 compliance functions covered (~67%). 9 function(s) lack test coverage.
+- **auth-service**: all 27 compliance functions covered (100%).
 - **transaction-service**: 1/16 compliance functions covered (~6%). 15 function(s) lack test coverage.
 - **pii-service**: 0/8 compliance functions covered (0%). 8 function(s) lack test coverage.
 - **audit-service**: 3/19 compliance functions covered (~16%). 16 function(s) lack test coverage.
