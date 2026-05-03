@@ -1,12 +1,78 @@
 [
   {
+    "number": 49,
+    "title": "Finish auth-service tests to reach 100% coverage",
+    "state": "open",
+    "labels": [
+      "testing"
+    ]
+  },
+  {
+    "number": 46,
+    "title": "Add inter-service API authentication with signed JWTs",
+    "state": "open",
+    "labels": []
+  },
+  {
+    "number": 45,
+    "title": "Set up CI pipeline for running service tests",
+    "state": "open",
+    "labels": []
+  },
+  {
+    "number": 44,
+    "title": "Implement account statement generation for regulatory compliance",
+    "state": "open",
+    "labels": []
+  },
+  {
+    "number": 43,
+    "title": "Add health check and readiness endpoints to all services",
+    "state": "open",
+    "labels": []
+  },
+  {
+    "number": 42,
+    "title": "Implement structured JSON logging across all services",
+    "state": "open",
+    "labels": []
+  },
+  {
+    "number": 41,
+    "title": "Add real-time payment notification webhooks",
+    "state": "open",
+    "labels": []
+  },
+  {
+    "number": 39,
+    "title": "Set up testing infrastructure for pii-service",
+    "state": "open",
+    "labels": [
+      "testing"
+    ]
+  },
+  {
+    "number": 38,
+    "title": "Map compliance-critical paths and write tests for audit-service",
+    "state": "open",
+    "labels": [
+      "testing"
+    ]
+  },
+  {
+    "number": 37,
+    "title": "Map compliance-critical paths and write tests for transaction-service",
+    "state": "open",
+    "labels": [
+      "testing"
+    ]
+  },
+  {
     "number": 26,
     "title": "Increase overall test coverage to meet OCC examination threshold",
     "state": "open",
     "labels": [
-      "testing",
-      "compliance",
-      "high-priority"
+      "testing"
     ]
   },
   {
@@ -14,9 +80,7 @@
     "title": "Add edge case tests for error handling across all services",
     "state": "open",
     "labels": [
-      "testing",
-      "compliance",
-      "high-priority"
+      "testing"
     ]
   },
   {
@@ -24,9 +88,7 @@
     "title": "Add tests for audit-service event logging",
     "state": "open",
     "labels": [
-      "testing",
-      "compliance",
-      "audit-service"
+      "testing"
     ]
   },
   {
@@ -34,9 +96,7 @@
     "title": "Add tests for pii-service email validation and record redaction",
     "state": "open",
     "labels": [
-      "testing",
-      "compliance",
-      "pii-service"
+      "testing"
     ]
   },
   {
@@ -44,10 +104,7 @@
     "title": "Add tests for pii-service masking functions",
     "state": "open",
     "labels": [
-      "testing",
-      "compliance",
-      "high-priority",
-      "pii-service"
+      "testing"
     ]
   },
   {
@@ -55,10 +112,7 @@
     "title": "Add tests for transaction-service transfer and getBalance",
     "state": "open",
     "labels": [
-      "testing",
-      "compliance",
-      "high-priority",
-      "transaction-service"
+      "testing"
     ]
   },
   {
@@ -66,10 +120,7 @@
     "title": "Add tests for transaction-service deposit and withdraw",
     "state": "open",
     "labels": [
-      "testing",
-      "compliance",
-      "high-priority",
-      "transaction-service"
+      "testing"
     ]
   },
   {
@@ -77,9 +128,7 @@
     "title": "Add tests for auth-service login and logout",
     "state": "open",
     "labels": [
-      "testing",
-      "compliance",
-      "auth-service"
+      "testing"
     ]
   },
   {
@@ -87,9 +136,7 @@
     "title": "Set up test infrastructure for audit-service",
     "state": "open",
     "labels": [
-      "testing",
-      "tech-debt",
-      "audit-service"
+      "testing"
     ]
   },
   {
@@ -97,9 +144,7 @@
     "title": "Set up test infrastructure for pii-service",
     "state": "open",
     "labels": [
-      "testing",
-      "tech-debt",
-      "pii-service"
+      "testing"
     ]
   },
   {
@@ -107,9 +152,7 @@
     "title": "Set up test infrastructure for transaction-service",
     "state": "open",
     "labels": [
-      "testing",
-      "tech-debt",
-      "transaction-service"
+      "testing"
     ]
   },
   {
