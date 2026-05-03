@@ -1,7 +1,7 @@
 # Coverage Audit Report
 
-**Report ID:** AUDIT-2026-05-02  
-**Generated:** 2026-05-02  
+**Report ID:** AUDIT-2026-05-03  
+**Generated:** 2026-05-03  
 **Type:** Coverage Assessment  
 **Scope:** All ClearBank Core services  
 
@@ -20,6 +20,42 @@ Overall estimated test coverage: **~38%**.
 | pii-service          | 0%                |
 | audit-service        | ~17%              |
 | **Overall**          | **~38%**          |
+
+## Compliance Critical Paths Coverage
+
+**Overall compliance path coverage: 5/11 (45%)**
+
+### auth-service — 3/3 paths covered (100%)
+
+| Critical Path | Test Coverage |
+|---|---|
+| `src/AuthService.java` | Covered |
+| `src/SessionManager.java` | Covered |
+| `src/TokenGenerator.java` | Covered |
+
+### transaction-service — 1/3 paths covered (33%)
+
+| Critical Path | Test Coverage |
+|---|---|
+| `src/TransactionService.java` | Covered |
+| `src/ComplianceChecker.java` | **Not covered** |
+| `src/TransactionAudit.java` | **Not covered** |
+
+### pii-service — 0/2 paths covered (0%)
+
+| Critical Path | Test Coverage |
+|---|---|
+| `src/pii.py` | **Not covered** |
+| `src/validators.py` | **Not covered** |
+
+### audit-service — 1/3 paths covered (33%)
+
+| Critical Path | Test Coverage |
+|---|---|
+| `src/audit.ts` | Covered |
+| `src/complianceReporter.ts` | **Not covered** |
+| `src/integrityChecker.ts` | **Not covered** |
+
 
 ## Assessment
 
