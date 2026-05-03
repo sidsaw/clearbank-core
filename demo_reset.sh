@@ -355,7 +355,17 @@ else
     fi
 fi
 
-# ── 7. Verification checklist ────────────────────────────────────────────────
+# ── 7. Regenerate coverage report ─────────────────────────────────────────────
+
+info "Regenerating coverage report..."
+if dry "python3 coverage_report.py"; then
+    python3 coverage_report.py > /dev/null 2>&1 || warn "Failed to regenerate coverage report."
+    if [ -f audit_reports/coverage.md ]; then
+        info "Coverage report regenerated at audit_reports/coverage.md"
+    fi
+fi
+
+# ── 8. Verification checklist ────────────────────────────────────────────────
 
 echo ""
 echo "════════════════════════════════════════════════════════════════════"
@@ -388,7 +398,7 @@ echo "      - Open https://github.com/$OWNER/$REPO/pulls"
 echo "      - No open PRs from previous demo run"
 echo ""
 echo "  [ ] Coverage audit report"
-echo "      - Run: python3 coverage_report.py"
+echo "      - Verify audit_reports/coverage.md includes both overall and compliance paths"
 echo "      - Compare audit_reports/coverage.md with .demo/baseline_coverage.md"
 echo ""
 echo "════════════════════════════════════════════════════════════════════"
