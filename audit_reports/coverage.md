@@ -1,7 +1,7 @@
 # Coverage Audit Report
 
-**Report ID:** AUDIT-2026-05-02  
-**Generated:** 2026-05-02  
+**Report ID:** AUDIT-2026-05-03  
+**Generated:** 2026-05-03  
 **Type:** Coverage Assessment  
 **Scope:** All ClearBank Core services  
 
@@ -9,24 +9,105 @@
 
 ## Summary
 
-Overall estimated test coverage: **~38%**.
+| Metric | Value |
+|---|---|
+| Overall file coverage | **~38%** |
+| Overall compliance function coverage | **~31%** (22/70 functions) |
 
 ## Coverage by Service
 
-| Service              | Coverage Estimate |
-|----------------------|-------------------|
-| auth-service         | ~70%              |
-| transaction-service  | ~17%              |
-| pii-service          | 0%                |
-| audit-service        | ~17%              |
-| **Overall**          | **~38%**          |
+| Service                | File Coverage | Compliance Fns |
+|------------------------|---------------|----------------|
+| auth-service           | ~70%          | ~67%           |
+| transaction-service    | ~17%          | ~6%            |
+| pii-service            | 0%            | 0%             |
+| audit-service          | ~17%          | ~16%           |
+| **Overall**            | ~38%          | ~31%           |
+
+## Compliance Function Coverage Detail
+
+### auth-service
+
+- File coverage: **~70%** (7 test file(s) / 10 source file(s))
+- Compliance function coverage: **~67%** (18/27 functions)
+
+**Uncovered compliance functions (9):**
+  - `isLocked` (in `AccountLockout.java`)
+  - `recordFailure` (in `AccountLockout.java`)
+  - `resetFailures` (in `AccountLockout.java`)
+  - `getFailureCount` (in `AccountLockout.java`)
+  - `getEntriesForUser` (in `AuditLogger.java`)
+  - `clear` (in `AuditLogger.java`)
+  - `getSessionTtlMs` (in `AuthConfig.java`)
+  - `getMaxLoginAttempts` (in `AuthConfig.java`)
+  - `getLockoutDurationMs` (in `AuthConfig.java`)
+
+### transaction-service
+
+- File coverage: **~17%** (1 test file(s) / 6 source file(s))
+- Compliance function coverage: **~6%** (1/16 functions)
+
+**Uncovered compliance functions (15):**
+  - `withdraw` (in `TransactionService.java`)
+  - `transfer` (in `TransactionService.java`)
+  - `getBalance` (in `TransactionService.java`)
+  - `check` (in `ComplianceChecker.java`)
+  - `record` (in `LedgerService.java`)
+  - `getEntriesForAccount` (in `LedgerService.java`)
+  - `computeBalance` (in `LedgerService.java`)
+  - `recordTransaction` (in `TransactionAudit.java`)
+  - `getRecordsForAccount` (in `TransactionAudit.java`)
+  - `getFailedTransactions` (in `TransactionAudit.java`)
+  - `verifyIntegrity` (in `TransactionAudit.java`)
+  - `validate` (in `TransferValidator.java`)
+  - `isWithinLimits` (in `TransferValidator.java`)
+  - `resolve` (in `AccountResolver.java`)
+  - `isActive` (in `AccountResolver.java`)
+
+### pii-service
+
+- File coverage: **0%** (0 test file(s) / 2 source file(s))
+- Compliance function coverage: **0%** (0/8 functions)
+
+**Uncovered compliance functions (8):**
+  - `mask_ssn` (in `pii.py`)
+  - `mask_account` (in `pii.py`)
+  - `is_valid_email` (in `pii.py`)
+  - `redact_record` (in `pii.py`)
+  - `validate_phone` (in `validators.py`)
+  - `validate_zip` (in `validators.py`)
+  - `validate_date_of_birth` (in `validators.py`)
+  - `sanitize_name` (in `validators.py`)
+
+### audit-service
+
+- File coverage: **~17%** (1 test file(s) / 6 source file(s))
+- Compliance function coverage: **~16%** (3/19 functions)
+
+**Uncovered compliance functions (16):**
+  - `getEventsByType` (in `audit.ts`)
+  - `toJson` (in `auditFormatter.ts`)
+  - `toLogLine` (in `auditFormatter.ts`)
+  - `toCsv` (in `auditFormatter.ts`)
+  - `filterByTimeRange` (in `auditFormatter.ts`)
+  - `generateReport` (in `complianceReporter.ts`)
+  - `isBelowThreshold` (in `complianceReporter.ts`)
+  - `summarize` (in `complianceReporter.ts`)
+  - `persist` (in `eventStore.ts`)
+  - `findById` (in `eventStore.ts`)
+  - `findByUser` (in `eventStore.ts`)
+  - `verifyChain` (in `integrityChecker.ts`)
+  - `detectGaps` (in `integrityChecker.ts`)
+  - `isExpired` (in `retentionPolicy.ts`)
+  - `shouldArchive` (in `retentionPolicy.ts`)
+  - `partitionEvents` (in `retentionPolicy.ts`)
 
 ## Assessment
 
-- **auth-service** has ~70% estimated coverage.
-- **transaction-service** has ~17% estimated coverage.
-- **audit-service** has ~17% estimated coverage.
-- **pii-service** — zero test coverage.
+- **auth-service**: 18/27 compliance functions covered (~67%). 9 function(s) lack test coverage.
+- **transaction-service**: 1/16 compliance functions covered (~6%). 15 function(s) lack test coverage.
+- **pii-service**: 0/8 compliance functions covered (0%). 8 function(s) lack test coverage.
+- **audit-service**: 3/19 compliance functions covered (~16%). 16 function(s) lack test coverage.
 
 ---
 

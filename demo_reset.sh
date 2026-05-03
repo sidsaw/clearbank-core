@@ -355,7 +355,20 @@ else
     fi
 fi
 
-# ── 7. Verification checklist ────────────────────────────────────────────────
+# ── 7. Regenerate coverage audit report ──────────────────────────────────────
+
+info "Regenerating coverage audit report..."
+if dry "python3 coverage_report.py"; then
+    if command -v python3 &>/dev/null && [ -f coverage_report.py ]; then
+        python3 coverage_report.py > /dev/null 2>&1 && \
+            info "Coverage report regenerated at audit_reports/coverage.md" || \
+            warn "coverage_report.py failed — report may be stale."
+    else
+        warn "python3 or coverage_report.py not found — skipping report regeneration."
+    fi
+fi
+
+# ── 8. Verification checklist ────────────────────────────────────────────────
 
 echo ""
 echo "════════════════════════════════════════════════════════════════════"
@@ -388,7 +401,6 @@ echo "      - Open https://github.com/$OWNER/$REPO/pulls"
 echo "      - No open PRs from previous demo run"
 echo ""
 echo "  [ ] Coverage audit report"
-echo "      - Run: python3 coverage_report.py"
-echo "      - Compare audit_reports/coverage.md with .demo/baseline_coverage.md"
+echo "      - Verify audit_reports/coverage.md matches .demo/baseline_coverage.md"
 echo ""
 echo "════════════════════════════════════════════════════════════════════"
