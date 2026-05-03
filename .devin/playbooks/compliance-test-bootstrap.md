@@ -4,15 +4,15 @@ description: Step-by-step playbook for bootstrapping compliance test coverage on
 
 # Playbook: Compliance Test Bootstrap
 
-Use this playbook whenever you are asked to add test coverage to a ClearBank Core service. It is designed to be repeatable across all four services (and any future services added to the monorepo). Follow every step in order.
+Use this playbook whenever you are asked to add test coverage to a ClearBank Core service. It is designed to be repeatable across all services in the monorepo. Follow every step in order.
 
 ---
 
 ## Step 1 — Check test framework setup
 
-Inspect the service directory and determine whether a test framework is already configured.
+Inspect the service directory and determine whether a test framework is already configured. Set it up if not.
 
-### Java services (`auth-service`, `transaction-service`)
+### Java services
 
 Check `pom.xml` for the following dependencies:
 
@@ -23,22 +23,15 @@ Check `pom.xml` for the following dependencies:
 
 If either is missing, add it to `<dependencies>` in `pom.xml`. Do **not** change the Java version (`17`) or the groupId (`com.clearbank`).
 
-Also verify a `src/test/` directory exists. If it doesn't, create it.
+Verify a `src/test/java/` directory exists mirroring the package structure of `src/main/java/`. If it doesn't, create it.
 
-**Current state:**
-- `auth-service` — JUnit 5.10.0 configured. `src/test/` exists with one test file.
-- `transaction-service` — JUnit 5.10.0 + Mockito 5.7.0 configured. `src/test/` exists but is empty (`.gitkeep` only).
+### Python services
 
-### Python services (`pii-service`)
+`pytest` is the test framework — it must be available in the CI environment but does not need to be listed in `requirements.txt`.
 
-`requirements.txt` intentionally has no runtime dependencies. `pytest` is the test framework — it must be available in the CI environment but is not listed in `requirements.txt`. No `setup.cfg` or `pyproject.toml` is needed.
+Verify a `tests/` directory exists at the service root. If it doesn't, create it with an empty `__init__.py`.
 
-Verify a `src/test/` or `tests/` directory exists. If it doesn't, create `tests/` at the service root.
-
-**Current state:**
-- `pii-service` — No test directory, no test files.
-
-### TypeScript services (`audit-service`)
+### TypeScript services
 
 Check `package.json` for `vitest` in `devDependencies`. If missing, add it:
 
@@ -59,51 +52,21 @@ Then add a `test` script:
 
 Run `npm install` after editing `package.json`.
 
-**Current state:**
-- `audit-service` — only `typescript` in devDependencies. Vitest is **not** configured. Must be added before any tests can run.
+Verify a `tests/` (or `src/__tests__/`) directory exists. If it doesn't, create it.
 
 ---
 
 ## Step 2 — Identify compliance-critical functions
 
-For each service, the following functions are compliance-critical and **must** have test coverage. These are the minimum — cover additional functions if time permits.
+Read the service's source files and identify which functions are compliance-critical. These are functions that:
 
-### auth-service (`src/auth.java` → `AuthService`)
+- Validate credentials or access tokens
+- Mutate financial state (balances, ledger entries)
+- Handle or transform PII
+- Write to the audit trail
+- Enforce business rules (rate limits, lockouts, permission checks)
 
-| Function | Why compliance-critical |
-|---|---|
-| `login(username, password)` | Credential validation — must reject bad passwords and unknown users |
-| `validateToken(token)` | Token integrity check — gates all downstream service access |
-| `logout(token)` | Session termination — must not allow reuse after logout |
-
-**Known gap:** `logout` currently just prints to stdout and does not invalidate the token. Note this in the audit report but do not refactor the implementation — test the observable behaviour as-is and flag the gap as a finding.
-
-### transaction-service (`src/transactions.java` → `TransactionService`)
-
-| Function | Why compliance-critical |
-|---|---|
-| `deposit(accountId, amount)` | Ledger mutation — incorrect balance = financial misstatement |
-| `withdraw(accountId, amount)` | Ledger mutation + overdraft prevention |
-| `transfer(fromId, toId, amount)` | Atomic ledger mutation across two accounts |
-| `getBalance(accountId)` | Balance read — must reject unknown accounts |
-
-### pii-service (`src/pii.py`)
-
-| Function | Why compliance-critical |
-|---|---|
-| `mask_ssn(ssn)` | SSN exposure — must mask correctly and reject malformed input |
-| `mask_account(account_number)` | Account number exposure |
-| `is_valid_email(email)` | Input validation gate |
-| `redact_record(record)` | End-to-end PII pipeline — must mask all fields correctly |
-
-### audit-service (`src/audit.ts`)
-
-| Function | Why compliance-critical |
-|---|---|
-| `logEvent(eventType, userId, details)` | Audit trail integrity — every compliance event must be recorded |
-| `getEvents(userId)` | Audit retrieval — must return only the correct user's events |
-| `getEventsByType(eventType)` | Compliance query — must filter correctly |
-| `clearEvents()` | Test utility — must actually empty the store |
+Every compliance-critical function **must** have test coverage. Document the list before writing any tests.
 
 ---
 
@@ -111,13 +74,16 @@ For each service, the following functions are compliance-critical and **must** h
 
 Apply the `!mocking-libraries` and `!pii-in-tests` knowledge macros before writing any tests.
 
-### General rules
+### Folder structure and naming conventions
 
-- One test file per service source file. Name it after the class/module under test:
-  - Java: `AuthTest.java`, `TransactionServiceTest.java`
-  - Python: `test_pii.py`
-  - TypeScript: `audit.test.ts`
-- Every compliance-critical function from Step 2 must have tests for **all** of the following case categories:
+- One test file per source file. Name it after the class or module under test:
+  - Java: `<ClassName>Test.java`, placed in `src/test/java/` under the matching package path
+  - Python: `test_<module_name>.py`, placed in `tests/`
+  - TypeScript: `<module_name>.test.ts`, placed in `tests/`
+
+### Case categories
+
+Every compliance-critical function must have tests covering **all** of the following categories:
 
 | Category | Examples |
 |---|---|
@@ -125,58 +91,64 @@ Apply the `!mocking-libraries` and `!pii-in-tests` knowledge macros before writi
 | Null / missing input | `null`, `None`, `undefined`, empty string |
 | Malformed input | Wrong format, wrong type |
 | Boundary values | Zero amounts, single-character strings, minimum/maximum |
-| Auth / access failures | Wrong password, unknown user, invalid token |
-| Financial edge cases | Insufficient funds, same-account transfer, zero-amount operations |
+| Failure paths | Rejected inputs, thrown exceptions, error states |
 
 ### PII rule (mandatory)
-Follow the `!pii-in-tests` knowledge. Assert on masked output only. Never print or log raw PII. Use obviously-fake synthetic values (`123-45-6789`, `ACC001`, `user@example.com`).
+
+Follow the `!pii-in-tests` knowledge. Assert on masked output only. Never print or log raw PII. Use obviously-fake synthetic values (e.g. `123-45-6789`, `ACC001`, `user@example.com`).
 
 ### Java test conventions
+
 ```java
 @ExtendWith(MockitoExtension.class)
-class TransactionServiceTest {
-    private TransactionService service;
+class ExampleServiceTest {
+    private ExampleService service;
 
     @BeforeEach
     void setUp() {
-        service = new TransactionService();
+        service = new ExampleService();
     }
 
     @Test
-    void deposit_increasesBalance() { ... }
+    void methodName_descriptionOfBehaviour() { ... }
 
     @Test
-    void withdraw_throwsOnInsufficientFunds() {
-        assertThrows(IllegalStateException.class,
-            () -> service.withdraw("ACC001", 99999.00));
+    void methodName_throwsOnInvalidInput() {
+        assertThrows(IllegalArgumentException.class,
+            () -> service.methodName(invalidInput));
     }
 }
 ```
 
 ### Python test conventions
+
 ```python
 import pytest
-from src.pii import mask_ssn, redact_record
+from src.<module> import <function>
 
-def test_mask_ssn_returns_masked_form():
-    assert mask_ssn("123-45-6789") == "XXX-XX-6789"
+def test_<function>_returns_expected_value():
+    assert <function>(valid_input) == expected_output
 
-def test_mask_ssn_raises_on_invalid_format():
+def test_<function>_raises_on_invalid_input():
     with pytest.raises(ValueError):
-        mask_ssn("not-an-ssn")
+        <function>(invalid_input)
 ```
 
 ### TypeScript test conventions
+
 ```typescript
 import { describe, it, expect, beforeEach } from 'vitest';
-import { logEvent, getEvents, clearEvents } from '../src/audit';
+import { methodName } from '../src/<module>';
 
-describe('audit', () => {
-  beforeEach(() => clearEvents());
+describe('<module>', () => {
+  beforeEach(() => { /* reset state */ });
 
-  it('logEvent records an event retrievable by userId', () => {
-    logEvent('LOGIN', 'user1', {});
-    expect(getEvents('user1')).toHaveLength(1);
+  it('methodName does expected thing with valid input', () => {
+    expect(methodName(validInput)).toBe(expectedOutput);
+  });
+
+  it('methodName throws on invalid input', () => {
+    expect(() => methodName(invalidInput)).toThrow();
   });
 });
 ```
@@ -185,71 +157,42 @@ describe('audit', () => {
 
 ## Step 4 — Verify CI runs tests
 
-Check `.github/workflows/` for a workflow that actually **runs** tests for the service (not just the coverage estimation script).
+Check `.github/workflows/` for a workflow that actually **runs** tests for the service (not just a coverage estimation script).
 
-**Current state:** The only CI workflows are:
-- `coverage-report.yml` — runs `python3 coverage_report.py` (a line-count estimate, not real test execution)
-- `devin-trigger.yml` — Devin session launcher
+If no test-execution workflow exists, create or update `.github/workflows/test.yml` with a job for the service. Use the appropriate setup action and test command for the language:
 
-Neither workflow runs `mvn test`, `pytest`, or `vitest`. This means **no tests are currently executed in CI**.
-
-If no test-execution workflow exists, create `.github/workflows/test.yml` with jobs for each service:
-
+**Java:**
 ```yaml
-name: Tests
-
-on:
-  pull_request:
-    types: [opened, synchronize]
-  push:
-    branches: [main]
-
-jobs:
-  auth-service:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-      - run: mvn test
-        working-directory: auth-service
-
-  transaction-service:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-      - run: mvn test
-        working-directory: transaction-service
-
-  pii-service:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-      - run: pip install pytest
-      - run: pytest
-        working-directory: pii-service
-
-  audit-service:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm install
-        working-directory: audit-service
-      - run: npm test
-        working-directory: audit-service
+- uses: actions/setup-java@v4
+  with:
+    java-version: '17'
+    distribution: 'temurin'
+- run: mvn test
+  working-directory: <service-directory>
 ```
+
+**Python:**
+```yaml
+- uses: actions/setup-python@v5
+  with:
+    python-version: '3.11'
+- run: pip install pytest
+- run: pytest
+  working-directory: <service-directory>
+```
+
+**TypeScript:**
+```yaml
+- uses: actions/setup-node@v4
+  with:
+    node-version: '20'
+- run: npm install
+  working-directory: <service-directory>
+- run: npm test
+  working-directory: <service-directory>
+```
+
+All jobs should trigger on `pull_request` and `push` to `main`.
 
 ---
 
@@ -260,7 +203,7 @@ After all tests are written and the CI workflow passes:
 1. Run `python3 coverage_report.py` from the repo root to get updated coverage numbers.
 2. Create a new file in `audit_reports/` named `coverage-audit-PR-<PR_NUMBER>.md`.
 3. The report must follow the standard audit report format (see the devin-trigger prompt for the template).
-4. Include a **Compliance Findings** section listing any gaps discovered during Step 2 (e.g. the `logout` non-invalidation issue in auth-service).
+4. Include a **Compliance Findings** section listing any gaps or implementation issues discovered during Step 2.
 5. Commit the report to the PR branch.
 
 ---
@@ -269,10 +212,11 @@ After all tests are written and the CI workflow passes:
 
 Before marking the task complete, verify every item:
 
-- [ ] Test framework configured in `pom.xml` / `package.json` / CI environment
-- [ ] Test file exists for every service touched
-- [ ] Every compliance-critical function from Step 2 has tests
-- [ ] All four case categories covered: happy path, null/malformed input, boundary values, failure paths
+- [ ] Test framework configured (`pom.xml` / `package.json` / CI environment)
+- [ ] Test directory exists with correct structure for the language
+- [ ] Test file exists for every source file touched
+- [ ] Every compliance-critical function identified in Step 2 has tests
+- [ ] All case categories covered: happy path, null/malformed input, boundary values, failure paths
 - [ ] No raw PII in assertions, log output, or test names
 - [ ] `.github/workflows/test.yml` exists and all jobs pass
 - [ ] `audit_reports/coverage-audit-PR-<N>.md` created and committed
